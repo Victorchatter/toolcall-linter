@@ -1,0 +1,5 @@
+# Normalize line endings for text files.
+* text=auto
+
+# Treat SVG files as text for diff-friendly storage.
+*.svg text
