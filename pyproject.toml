@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "toolcall-linter"
+version = "0.1.0"
+description = "Local linter that cross-checks agent transcript tool calls against declared schemas."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Claude"}
+]
+keywords = ["agent", "llm", "mcp", "tool-call", "linter", "transcript"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "jsonschema>=4.0.0",
+]
+
+[project.scripts]
+toolcall-linter = "toolcall_linter.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Victorchatter/toolcall-linter"
+Repository = "https://github.com/Victorchatter/toolcall-linter"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/toolcall_linter"]
