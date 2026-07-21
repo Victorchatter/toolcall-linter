@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#334155"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="900" height="420" fill="url(#bg2)" rx="16"/>
+
+  <text x="450" y="45" text-anchor="middle" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="24" font-weight="700">What it catches</text>
+  <text x="450" y="72" text-anchor="middle" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="13">Five silent failure modes detected at lint time</text>
+
+  <!-- Card 1: Undefined tool -->
+  <rect x="60" y="110" width="250" height="120" rx="12" fill="url(#card)" stroke="#475569" stroke-width="2"/>
+  <text x="185" y="142" text-anchor="middle" fill="#f87171" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">❌ Undefined tool</text>
+  <text x="185" y="175" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="12">{"name": "frobnicate"}</text>
+  <text x="185" y="205" text-anchor="middle" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="12">Agent hallucinated a tool name.</text>
+
+  <!-- Card 2: Missing required arg -->
+  <rect x="325" y="110" width="250" height="120" rx="12" fill="url(#card)" stroke="#475569" stroke-width="2"/>
+  <text x="450" y="142" text-anchor="middle" fill="#fbbf24" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">⚠ Missing required arg</text>
+  <text x="450" y="175" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="12">{"name": "read_file"}</text>
+  <text x="450" y="205" text-anchor="middle" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="12">file_path is required.</text>
+
+  <!-- Card 3: Wrong type -->
+  <rect x="590" y="110" width="250" height="120" rx="12" fill="url(#card)" stroke="#475569" stroke-width="2"/>
+  <text x="715" y="142" text-anchor="middle" fill="#f472b6" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">🔤 Wrong type</text>
+  <text x="715" y="175" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="12">file_path: 123</text>
+  <text x="715" y="205" text-anchor="middle" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="12">Expected string, got int.</text>
+
+  <!-- Card 4: Extra arg -->
+  <rect x="190" y="260" width="250" height="120" rx="12" fill="url(#card)" stroke="#475569" stroke-width="2"/>
+  <text x="315" y="292" text-anchor="middle" fill="#a78bfa" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">🚫 Extra argument</text>
+  <text x="315" y="325" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="12">{"encoding": "utf-8"}</text>
+  <text x="315" y="355" text-anchor="middle" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="12">Schema forbids additional props.</text>
+
+  <!-- Card 5: Bad enum -->
+  <rect x="460" y="260" width="250" height="120" rx="12" fill="url(#card)" stroke="#475569" stroke-width="2"/>
+  <text x="585" y="292" text-anchor="middle" fill="#fb923c" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700">📊 Invalid enum</text>
+  <text x="585" y="325" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="12">output_mode: "full_text"</text>
+  <text x="585" y="355" text-anchor="middle" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="12">Allowed: content | files_with_matches | count.</text>
+</svg>

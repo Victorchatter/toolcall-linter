@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360" width="820" height="360">
+  <defs>
+    <linearGradient id="termBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0b0f19"/>
+      <stop offset="100%" style="stop-color:#111827"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="820" height="360" fill="url(#termBg)" rx="12"/>
+
+  <!-- Window chrome -->
+  <rect x="0" y="0" width="820" height="34" fill="#1f2937" rx="12"/>
+  <rect x="0" y="12" width="820" height="22" fill="#1f2937"/>
+  <circle cx="22" cy="17" r="6" fill="#ef4444"/>
+  <circle cx="42" cy="17" r="6" fill="#f59e0b"/>
+  <circle cx="62" cy="17" r="6" fill="#22c55e"/>
+  <text x="410" y="22" text-anchor="middle" fill="#9ca3af" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="12">Toolcall-linter demo</text>
+
+  <!-- Prompt -->
+  <text x="24" y="70" fill="#22d3ee" font-family="monospace" font-size="15">$</text>
+  <text x="42" y="70" fill="#e5e7eb" font-family="monospace" font-size="15">toolcall-linter transcript.jsonl --tools tools.json</text>
+
+  <!-- Output lines -->
+  <text x="24" y="110" fill="#f87171" font-family="monospace" font-size="13">transcript.jsonl:2 read_file: 'file_path' is a required property</text>
+  <text x="24" y="140" fill="#fbbf24" font-family="monospace" font-size="13">transcript.jsonl:4 Bash: 'description' is a required property</text>
+  <text x="24" y="170" fill="#a78bfa" font-family="monospace" font-size="13">transcript.jsonl:6 Grep: 'full_text' is not one of ['content', 'files_with_matches', 'count'] (output_mode)</text>
+  <text x="24" y="200" fill="#f472b6" font-family="monospace" font-size="13">transcript.jsonl:7 NotRealTool: tool 'NotRealTool' is not declared in schema source</text>
+
+  <!-- Exit code -->
+  <text x="24" y="250" fill="#6b7280" font-family="monospace" font-size="13">Exit code: 1  ← CI will see this and block the broken transcript.</text>
+
+  <!-- Annotation box -->
+  <rect x="24" y="285" width="770" height="52" rx="8" fill="#1f2937" stroke="#374151"/>
+  <text x="409" y="318" text-anchor="middle" fill="#d1d5db" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="14">Each line is a precise violation with file, line, tool, and message.</text>
+</svg>

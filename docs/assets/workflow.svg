@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#38bdf8"/>
+      <stop offset="100%" style="stop-color:#818cf8"/>
+    </linearGradient>
+    <linearGradient id="okGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#16a34a"/>
+    </linearGradient>
+    <linearGradient id="errGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171"/>
+      <stop offset="100%" style="stop-color:#ef4444"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="url(#bgGrad)" rx="16"/>
+
+  <!-- Title -->
+  <text x="450" y="45" text-anchor="middle" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="26" font-weight="700">How toolcall-linter works</text>
+  <text x="450" y="72" text-anchor="middle" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="14">Cross-check every agent tool call against its declared schema before failures go silent</text>
+
+  <!-- Input: Transcript -->
+  <rect x="60" y="110" width="210" height="130" rx="12" fill="#334155" stroke="#475569" stroke-width="2"/>
+  <text x="165" y="140" text-anchor="middle" fill="#e2e8f0" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="600">Agent Transcript</text>
+  <text x="165" y="168" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">Claude Code JSONL</text>
+  <text x="165" y="188" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">OpenAI messages</text>
+  <text x="165" y="208" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">{ name, input }</text>
+  <text x="165" y="228" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">tool_calls[]</text>
+
+  <!-- Input: Schema -->
+  <rect x="60" y="280" width="210" height="130" rx="12" fill="#334155" stroke="#475569" stroke-width="2"/>
+  <text x="165" y="310" text-anchor="middle" fill="#e2e8f0" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="600">Tool Schema Source</text>
+  <text x="165" y="338" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">tools.json</text>
+  <text x="165" y="358" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">mcp-stdio:&lt;cmd&gt;</text>
+  <text x="165" y="378" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">mcp-http:&lt;url&gt;</text>
+  <text x="165" y="398" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">tools/list</text>
+
+  <!-- Arrow right -->
+  <path d="M 280 175 L 360 175" stroke="url(#accentGrad)" stroke-width="3" fill="none" marker-end="url(#arrowAccent)"/>
+  <path d="M 280 345 L 360 260" stroke="url(#accentGrad)" stroke-width="3" fill="none" marker-end="url(#arrowAccent)"/>
+
+  <!-- Core linter box -->
+  <rect x="370" y="130" width="280" height="240" rx="16" fill="#1e293b" stroke="url(#accentGrad)" stroke-width="3"/>
+  <text x="510" y="165" text-anchor="middle" fill="#38bdf8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700">toolcall-linter</text>
+
+  <!-- Steps inside -->
+  <rect x="395" y="185" width="230" height="36" rx="8" fill="#0f172a" stroke="#475569"/>
+  <text x="510" y="208" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="12">1. parse transcript</text>
+
+  <rect x="395" y="232" width="230" height="36" rx="8" fill="#0f172a" stroke="#475569"/>
+  <text x="510" y="255" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="12">2. load schemas</text>
+
+  <rect x="395" y="279" width="230" height="36" rx="8" fill="#0f172a" stroke="#475569"/>
+  <text x="510" y="302" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="12">3. match + jsonschema validate</text>
+
+  <rect x="395" y="326" width="230" height="36" rx="8" fill="#0f172a" stroke="#475569"/>
+  <text x="510" y="349" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="12">4. emit violations</text>
+
+  <!-- Arrow to outputs -->
+  <path d="M 660 250 L 740 250" stroke="url(#accentGrad)" stroke-width="3" fill="none" marker-end="url(#arrowAccent)"/>
+
+  <!-- Output: Clean / Dirty -->
+  <rect x="755" y="150" width="160" height="80" rx="12" fill="#0f172a" stroke="url(#okGrad)" stroke-width="2"/>
+  <text x="835" y="185" text-anchor="middle" fill="#4ade80" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="600">✓ Clean</text>
+  <text x="835" y="210" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">exit 0</text>
+
+  <rect x="755" y="270" width="160" height="120" rx="12" fill="#0f172a" stroke="url(#errGrad)" stroke-width="2"/>
+  <text x="835" y="305" text-anchor="middle" fill="#f87171" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="600">✗ Violations</text>
+  <text x="835" y="330" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">undefined tool</text>
+  <text x="835" y="350" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">missing arg</text>
+  <text x="835" y="370" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">wrong type / enum</text>
+
+  <!-- Methodology note -->
+  <rect x="120" y="445" width="660" height="48" rx="8" fill="#0f172a" stroke="#475569"/>
+  <text x="450" y="475" text-anchor="middle" fill="#cbd5e1" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="13">Methodology: fail fast at lint time instead of debugging silent agent runtime failures downstream.</text>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowAccent" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+</svg>
