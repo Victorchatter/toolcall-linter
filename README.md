@@ -75,6 +75,7 @@ It reads the agent transcript, loads the declared tool schemas, validates every 
 ```bash
 # Recommended: install with pipx (isolated, global CLI)
 pipx install .
+pipx install git+https://github.com/Victorchatter/toolcall-linter
 
 # Or in a local venv
 python -m venv .venv
@@ -157,7 +158,7 @@ toolcall-linter transcript.jsonl --tools tools.json --format json
 ```json
 {
   "ok": false,
-  "violation_count": 3,
+  "violation_count": 1,
   "violations": [
     {
       "file": "transcript.jsonl",
@@ -263,12 +264,12 @@ The `arguments` string is parsed as JSON before validation.
 ## CLI reference
 
 ```bash
-toolcall-linter <transcript> --tools <source> [--format text|json]
+toolcall-linter <transcript>... --tools <source> [--format text|json]
 ```
 
 | Argument | Description |
 |---|---|
-| `<transcript>` | Path to the transcript file (JSONL or JSON array). |
+| `<transcript>...` | One or more paths to transcript files (JSONL or JSON array). Supports globs. |
 | `--tools <source>` | Schema source: `tools.json`, `mcp-stdio:<cmd>`, or `mcp-http:<url>`. **Required.** |
 | `--format text|json` | Output format. Default: `text`. |
 

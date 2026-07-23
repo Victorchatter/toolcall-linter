@@ -1,4 +1,4 @@
-{"type": "tool_use", "name": "read_file", "input": {"file_path": "/c/Users/Victor/toolcall-linter/README.md"}}
+{"type": "tool_use", "name": "read_file", "input": {"file_path": "README.md"}}
 {"type": "tool_use", "name": "read_file", "input": {"limit": 10}}
 {"type": "tool_use", "name": "Bash", "input": {"command": "git status", "description": "Check working tree status"}}
 {"type": "tool_use", "name": "Bash", "input": {"command": "git status"}}

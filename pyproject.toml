@@ -10,7 +10,7 @@ readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "Claude"}
+    {name = "Victor"}
 ]
 keywords = ["agent", "llm", "mcp", "tool-call", "linter", "transcript"]
 classifiers = [
