@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "toolcall-linter"
-version = "0.3.0"
+version = "0.4.0"
 description = "Local linter that cross-checks agent transcript tool calls against declared schemas."
 readme = "README.md"
 license = {text = "MIT"}

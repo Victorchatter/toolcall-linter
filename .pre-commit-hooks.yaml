@@ -1,0 +1,8 @@
+- id: toolcall-linter
+  name: toolcall-linter
+  description: Lint agent transcript tool calls against declared schemas.
+  entry: toolcall-linter
+  language: python
+  files: \.(json|jsonl)$
+  require_serial: false
+  args: [--format, sarif]

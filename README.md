@@ -392,6 +392,62 @@ jobs:
 
 Because the linter is read-only and offline, it is safe to run on every commit.
 
+### GitHub Action
+
+The repo provides a reusable composite action at `action.yml`. It installs the
+linter from the checked-out repo, runs it on the supplied transcript(s), writes
+a report, and exposes the finding count as an output.
+
+```yaml
+# .github/workflows/lint-toolcalls.yml
+name: lint-toolcalls
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Victorchatter/toolcall-linter@v0.4.0
+        with:
+          transcript: transcripts/*.jsonl
+          tools: tools.json
+          format: sarif
+          fail-on-blockers: true
+```
+
+Inputs:
+
+| Input | Required | Default | Description |
+|---|---|---|---|
+| `transcript` | yes | — | Path to transcript(s). Glob patterns are supported. |
+| `tools` | yes | — | Path to `tools.json` or MCP source. |
+| `format` | no | `sarif` | `text`, `json`, or `sarif`. |
+| `fail-on-blockers` | no | `true` | Fail the step when findings are reported. |
+
+Outputs:
+
+| Output | Description |
+|---|---|
+| `findings-count` | Number of findings reported. |
+| `report-path` | Path to the generated report file. |
+
+### pre-commit hook
+
+Add the hook to `.pre-commit-config.yaml`:
+
+```yaml
+repos:
+  - repo: https://github.com/Victorchatter/toolcall-linter
+    rev: v0.4.0
+    hooks:
+      - id: toolcall-linter
+        args: [--tools, tools.json, --format, sarif]
+```
+
+The default hook runs on JSON files. Override `files` or `types` to lint
+committed transcripts. Pass `--warn-only` to report issues without blocking the
+commit.
+
 ---
 
 ## Development

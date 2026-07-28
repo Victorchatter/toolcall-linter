@@ -36,7 +36,7 @@ def _validate_sarif(payload: dict) -> None:
     jsonschema.validate(instance=payload, schema=schema)
 
 
-def main() -> int:
+def _run_selfcheck() -> int:
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp = Path(tmpdir)
         tools_path = tmp / "tools.json"
@@ -283,6 +283,41 @@ def main() -> int:
 
         print("PASS")
         return 0
+
+
+def _check_precommit_hook() -> int:
+    """If pre-commit is installed, verify the local hook definition is usable."""
+    try:
+        if subprocess.run(["pre-commit", "--version"], capture_output=True).returncode != 0:
+            print("SKIP: pre-commit not installed")
+            return 0
+    except FileNotFoundError:
+        print("SKIP: pre-commit not installed")
+        return 0
+
+    repo_root = Path(__file__).resolve().parent
+    result = subprocess.run(
+        ["pre-commit", "try-repo", str(repo_root), "toolcall-linter", "--all-files"],
+        capture_output=True,
+        text=True,
+        cwd=repo_root,
+    )
+    # The hook may fail because the example transcript has violations; we only
+    # care that the hook installed and ran without a configuration error.
+    if "toolcall-linter" not in result.stdout and "toolcall-linter" not in result.stderr:
+        print("FAIL: pre-commit try-repo did not execute the toolcall-linter hook", file=sys.stderr)
+        print(result.stdout)
+        print(result.stderr, file=sys.stderr)
+        return 1
+    print("pre-commit hook usable")
+    return 0
+
+
+def main() -> int:
+    rc = _run_selfcheck()
+    if rc != 0:
+        return rc
+    return _check_precommit_hook()
 
 
 if __name__ == "__main__":

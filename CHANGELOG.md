@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0
+
+### Added
+- Reusable GitHub Action (`action.yml`) for linting transcripts in CI.
+  - Inputs: `transcript`, `tools`, `format`, `fail-on-blockers`.
+  - Outputs: `findings-count`, `report-path`.
+- `.pre-commit-hooks.yaml` so the linter can be used as a pre-commit hook.
+- `.github/workflows/selfcheck.yml` exercises the action on example data.
+- README sections documenting the GitHub Action and pre-commit hook.
+
 ## 0.3.0
 
 ### Added

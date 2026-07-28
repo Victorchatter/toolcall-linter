@@ -1,0 +1,48 @@
+name: selfcheck
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run toolcall-linter action (sarif)
+        id: linter
+        uses: ./
+        with:
+          transcript: examples/transcript.jsonl
+          tools: examples/tools.json
+          format: sarif
+          fail-on-blockers: false
+
+      - name: Verify outputs
+        shell: bash
+        run: |
+          echo "findings-count=${{ steps.linter.outputs.findings-count }}"
+          echo "report-path=${{ steps.linter.outputs.report-path }}"
+          test -f "${{ steps.linter.outputs.report-path }}"
+          test "${{ steps.linter.outputs.findings-count }}" -gt 0
+
+      - name: Run toolcall-linter action (json)
+        id: linter-json
+        uses: ./
+        with:
+          transcript: examples/transcript.jsonl
+          tools: examples/tools.json
+          format: json
+          fail-on-blockers: false
+
+      - name: Verify JSON outputs
+        shell: bash
+        run: |
+          test -f "${{ steps.linter-json.outputs.report-path }}"
+          test "${{ steps.linter-json.outputs.findings-count }}" -gt 0
+
+      - name: Run native selfcheck.py
+        run: python selfcheck.py
