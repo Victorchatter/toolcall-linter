@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0
+
+### Added
+- `toolcall-linter infer` subcommand that builds a JSON Schema from a transcript.
+  - Infers tool names, argument properties, required keys, types, and string
+    enums for small value sets.
+  - Writes MCP-style `tools.json` output and validates it against the source
+    tape by default.
+
 ## 0.2.0
 
 ### Added

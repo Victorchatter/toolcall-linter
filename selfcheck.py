@@ -172,6 +172,115 @@ def main() -> int:
                 print("FAIL: SARIF result missing physicalLocation", file=sys.stderr)
                 return 1
 
+        # --- Infer schema tests ------------------------------------------------
+        clean_transcript_path = tmp / "clean-transcript.jsonl"
+        inferred_path = tmp / "inferred-tools.json"
+        clean_transcript = [
+            {"type": "tool_use", "name": "read_file", "input": {"file_path": "/etc/passwd"}},
+            {"type": "tool_use", "name": "read_file", "input": {"file_path": "/x", "limit": 10}},
+            {"type": "tool_use", "name": "Bash", "input": {"command": "git status", "description": "Check status"}},
+            {"type": "tool_use", "name": "Bash", "input": {"command": "ls"}},
+        ]
+        clean_transcript_path.write_text(
+            "\n".join(json.dumps(line) for line in clean_transcript) + "\n",
+            encoding="utf-8",
+        )
+
+        infer_result = subprocess.run(
+            [sys.executable, "-m", "toolcall_linter.cli", "infer", str(clean_transcript_path), "-o", str(inferred_path), "--pretty"],
+            capture_output=True,
+            text=True,
+            cwd=Path(__file__).resolve().parent,
+            env=env,
+        )
+        if infer_result.returncode != 0:
+            print("FAIL: infer command returned nonzero exit code", file=sys.stderr)
+            print(infer_result.stdout, file=sys.stderr)
+            print(infer_result.stderr, file=sys.stderr)
+            return 1
+        if "OK" not in infer_result.stdout:
+            print("FAIL: infer command did not report OK", file=sys.stderr)
+            print(infer_result.stdout, file=sys.stderr)
+            return 1
+
+        try:
+            inferred = json.loads(inferred_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            print(f"FAIL: inferred schema is not valid JSON: {exc}", file=sys.stderr)
+            return 1
+
+        tools = inferred.get("tools", [])
+        if len(tools) != 2:
+            print(f"FAIL: expected 2 inferred tools, got {len(tools)}", file=sys.stderr)
+            return 1
+
+        names = {tool.get("name") for tool in tools}
+        if names != {"read_file", "Bash"}:
+            print(f"FAIL: expected tools read_file and Bash, got {names}", file=sys.stderr)
+            return 1
+
+        by_name = {tool["name"]: tool for tool in tools}
+        for name, tool in by_name.items():
+            schema = tool.get("inputSchema", {})
+            if schema.get("type") != "object":
+                print(f"FAIL: {name} inputSchema type is not object", file=sys.stderr)
+                return 1
+            if schema.get("additionalProperties") is not False:
+                print(f"FAIL: {name} inputSchema does not forbid additionalProperties", file=sys.stderr)
+                return 1
+            if not isinstance(schema.get("properties"), dict):
+                print(f"FAIL: {name} inputSchema has no properties dict", file=sys.stderr)
+                return 1
+            if not isinstance(schema.get("required"), list):
+                print(f"FAIL: {name} inputSchema has no required list", file=sys.stderr)
+                return 1
+            if not isinstance(tool.get("_meta", {}).get("inferred_from"), list):
+                print(f"FAIL: {name} missing _meta.inferred_from list", file=sys.stderr)
+                return 1
+
+        read_file_required = set(by_name["read_file"]["inputSchema"]["required"])
+        bash_required = set(by_name["Bash"]["inputSchema"]["required"])
+        if read_file_required != {"file_path"}:
+            print(f"FAIL: read_file required mismatch: {read_file_required}", file=sys.stderr)
+            return 1
+        if bash_required != {"command"}:
+            print(f"FAIL: Bash required mismatch: {bash_required}", file=sys.stderr)
+            return 1
+
+        if by_name["read_file"]["inputSchema"]["properties"]["file_path"].get("type") != "string":
+            print("FAIL: read_file.file_path type is not string", file=sys.stderr)
+            return 1
+        if by_name["Bash"]["inputSchema"]["properties"]["command"].get("type") != "string":
+            print("FAIL: Bash.command type is not string", file=sys.stderr)
+            return 1
+        if by_name["read_file"]["inputSchema"]["properties"]["limit"].get("type") != "integer":
+            print("FAIL: read_file.limit type is not integer", file=sys.stderr)
+            return 1
+
+        # Re-run linter with inferred schema; the source tape should produce no violations.
+        revalidate_result = subprocess.run(
+            [sys.executable, "-m", "toolcall_linter.cli", str(clean_transcript_path), "--tools", str(inferred_path), "--format", "json"],
+            capture_output=True,
+            text=True,
+            cwd=Path(__file__).resolve().parent,
+            env=env,
+        )
+        if revalidate_result.returncode != 0:
+            print("FAIL: re-validation with inferred schema returned nonzero exit code", file=sys.stderr)
+            print(revalidate_result.stdout, file=sys.stderr)
+            print(revalidate_result.stderr, file=sys.stderr)
+            return 1
+        try:
+            revalidate_output = json.loads(revalidate_result.stdout)
+        except json.JSONDecodeError:
+            print("FAIL: re-validation stdout is not valid JSON", file=sys.stderr)
+            print(revalidate_result.stdout, file=sys.stderr)
+            return 1
+        if not revalidate_output.get("ok") or revalidate_output.get("violation_count", -1) != 0:
+            print("FAIL: expected no violations when validating source tape with inferred schema", file=sys.stderr)
+            print(revalidate_result.stdout, file=sys.stderr)
+            return 1
+
         print("PASS")
         return 0
 

@@ -149,6 +149,39 @@ transcript.jsonl:4 frobnicate: tool 'frobnicate' is not declared in schema sourc
 
 Exit code is `1` because violations were found.
 
+### Infer a schema from a tape
+
+If you have an agent transcript but no declared `tools.json`, infer one
+from the tape:
+
+```bash
+toolcall-linter infer transcript.jsonl -o tools.json --pretty
+```
+
+The `infer` subcommand inspects every tool call, unions the argument keys
+seen for each tool, marks keys that appear in every call as required,
+infers JSON Schema types, and emits string enums when a property has ten
+or fewer distinct values. It writes an MCP-style `tools.json` and, by
+default, validates that schema against the source tape:
+
+```text
+OK: inferred schema validates against 1 transcript(s)
+```
+
+Use `--no-validate` to skip the validation pass. Once you have `tools.json`,
+lint other transcripts with the usual command:
+
+```bash
+toolcall-linter another-transcript.jsonl --tools tools.json
+```
+
+You can pass multiple transcripts to `infer` to build a schema from a larger
+corpus:
+
+```bash
+toolcall-linter infer transcripts/*.jsonl -o tools.json --pretty
+```
+
 ### JSON output
 
 ```bash
@@ -275,13 +308,25 @@ The `arguments` string is parsed as JSON before validation.
 
 ```bash
 toolcall-linter <transcript>... --tools <source> [--format text|json]
+toolcall-linter infer <transcript>... -o <tools.json> [--pretty] [--no-validate]
 ```
+
+### Lint
 
 | Argument | Description |
 |---|---|
 | `<transcript>...` | One or more paths to transcript files (JSONL or JSON array). Supports globs. |
 | `--tools <source>` | Schema source: `tools.json`, `mcp-stdio:<cmd>`, or `mcp-http:<url>`. **Required.** |
 | `--format text|json|sarif` | Output format. Default: `text`. |
+
+### Infer
+
+| Argument | Description |
+|---|---|
+| `<transcript>...` | One or more paths to transcript files to inspect. Supports globs. |
+| `-o`, `--output <tools.json>` | Output file for the inferred MCP-style tool schema. **Required.** |
+| `--pretty` | Write formatted JSON with indentation. |
+| `--no-validate` | Skip validating the inferred schema against the source transcript(s). |
 
 ### Exit codes
 
