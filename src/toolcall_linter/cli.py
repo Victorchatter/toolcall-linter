@@ -6,7 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from .reporter import Violation, report_json, report_text
+from .reporter import Violation, report_json, report_sarif, report_text
 from .schema_source import load_schema_source
 from .transcript import parse_transcript
 from .validator import validate_calls
@@ -29,7 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--format",
-        choices=["text", "json"],
+        choices=["text", "json", "sarif"],
         default="text",
         help="Output format (default: text)",
     )
@@ -70,6 +70,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.format == "json":
         report_json(all_violations)
+    elif args.format == "sarif":
+        report_sarif(all_violations)
     else:
         report_text(all_violations)
 

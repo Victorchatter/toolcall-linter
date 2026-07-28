@@ -172,6 +172,16 @@ toolcall-linter transcript.jsonl --tools tools.json --format json
 }
 ```
 
+### SARIF output
+
+```bash
+toolcall-linter transcript.jsonl --tools tools.json --format sarif > results.sarif
+```
+
+SARIF output includes `runs[0].results` with `ruleId`, `message.text`, and
+`locations[0].physicalLocation` mapped to the transcript file and line number.
+Use it with any SARIF-compatible CI viewer or the GitHub Actions workflow below.
+
 ---
 
 ## Methodology
@@ -271,7 +281,7 @@ toolcall-linter <transcript>... --tools <source> [--format text|json]
 |---|---|
 | `<transcript>...` | One or more paths to transcript files (JSONL or JSON array). Supports globs. |
 | `--tools <source>` | Schema source: `tools.json`, `mcp-stdio:<cmd>`, or `mcp-http:<url>`. **Required.** |
-| `--format text|json` | Output format. Default: `text`. |
+| `--format text|json|sarif` | Output format. Default: `text`. |
 
 ### Exit codes
 
@@ -309,6 +319,30 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       - run: uv tool install .
       - run: toolcall-linter transcripts/*.jsonl --tools tools.json
+```
+
+### GitHub Actions with SARIF
+
+Generate a SARIF file and upload it to GitHub Advanced Security so violations
+appear inline on the PR diff:
+
+```yaml
+# .github/workflows/lint-transcripts-sarif.yml
+name: lint-transcripts-sarif
+on: [pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv tool install .
+      - run: toolcall-linter transcripts/*.jsonl --tools tools.json --format sarif > toolcall-linter.sarif
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: toolcall-linter.sarif
 ```
 
 Because the linter is read-only and offline, it is safe to run on every commit.

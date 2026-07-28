@@ -35,3 +35,36 @@ def report_json(
     }
     json.dump(payload, stream, indent=2)
     stream.write("\n")
+
+
+def report_sarif(
+    violations: Iterable[Violation], stream: TextIO = sys.stdout, *, tool_name: str = "toolcall-linter"
+) -> None:
+    violation_list = list(violations)
+    results = []
+    for v in violation_list:
+        result: dict = {
+            "ruleId": v.tool,
+            "level": "error" if v.severity == "error" else "warning",
+            "message": {"text": v.message},
+            "locations": [],
+        }
+        if v.file or v.line:
+            physical = {"artifactLocation": {"uri": v.file or "transcript"}}
+            if v.line:
+                physical["region"] = {"startLine": v.line}
+            result["locations"].append({"physicalLocation": physical})
+        results.append(result)
+
+    payload = {
+        "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+        "version": "2.1.0",
+        "runs": [
+            {
+                "tool": {"driver": {"name": tool_name, "informationUri": "https://github.com/Victorchatter/toolcall-linter"}},
+                "results": results,
+            }
+        ],
+    }
+    json.dump(payload, stream, indent=2)
+    stream.write("\n")
